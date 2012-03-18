@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = ../_build
+PUBLISHDIR    = ..
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -37,6 +38,22 @@ help:
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  publish    to publish all documents into tach.github.com"
+
+publish: html
+	rsync -rlvHS $(BUILDDIR)/html/ $(PUBLISHDIR)/
+	find $(PUBLISHDIR) -mindepth 1 -type d \
+	    ! -path $(BUILDDIR) ! -path $(BUILDDIR)/\* \
+	    ! -path $(PUBLISHDIR)/sources ! -path $(PUBLISHDIR)/sources/\* \
+	    ! -path $(PUBLISHDIR)/.git ! -path $(PUBLISHDIR)/.git/\* \
+	    -exec git add {} \;
+	find $(PUBLISHDIR) -mindepth 1 -type f \
+	    ! -path $(BUILDDIR)/\* \
+	    ! -path $(PUBLISHDIR)/sources/\* \
+	    ! -path $(PUBLISHDIR)/.git/\* \
+	    -exec git add {} \;
+	git commit -am "Published at `env LC_ALL=C date`"
+	git push -u origin master
 
 clean:
 	-rm -rf $(BUILDDIR)/*
