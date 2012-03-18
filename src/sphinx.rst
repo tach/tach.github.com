@@ -2,8 +2,8 @@
 Using Sphinx
 =========================
 
-Installing into MacOSX 10.7 (Lion)
-==================================
+Installing Sphinx into MacOSX 10.7 (Lion)
+=========================================
 
 Run following two commands to install.
 
