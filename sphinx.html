@@ -51,19 +51,59 @@
 <h1>Using Sphinx<a class="headerlink" href="#using-sphinx" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="installing-into-macosx-10-7-lion">
 <h2>Installing into MacOSX 10.7 (Lion)<a class="headerlink" href="#installing-into-macosx-10-7-lion" title="Permalink to this headline">¶</a></h2>
-<p>Run &#8220;sudo easy_install pip&#8221;. And then, run &#8220;sudo pip install Sphinx&#8221;.
-That&#8217;s all.</p>
+<p>Run following two commands to install.</p>
+<div class="highlight-sh"><div class="highlight"><pre>% sudo easy_install pip
+% sudo pip install Sphinx
+</pre></div>
+</div>
+<p>That&#8217;s all.</p>
 </div>
 <div class="section" id="how-to-create-tach-github-com">
 <h2>How to create tach.github.com<a class="headerlink" href="#how-to-create-tach-github-com" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
-<li>create github repository: <a class="reference external" href="https://github.com/tach/tach.github.com">https://github.com/tach/tach.github.com</a></li>
-<li>clone the repository and create &#8220;sources&#8221; directory</li>
-<li>run &#8220;sphinx-quickstart&#8221; command on &#8220;sources&#8221; directory</li>
-<li>change your Makefile like <a class="reference external" href="https://github.com/tach/tach.github.com/sources/Makefile">https://github.com/tach/tach.github.com/sources/Makefile</a></li>
-</ol>
+<p>At first, create github repository at <a class="reference external" href="https://github.com/tach/tach.github.com">https://github.com/tach/tach.github.com</a>
+and clone it.</p>
+<div class="highlight-sh"><div class="highlight"><pre>% git clone git@github.com:tach/tach.github.com.git
+</pre></div>
+</div>
+<p>Then, create <tt class="docutils literal"><span class="pre">src</span></tt> directory and run <tt class="docutils literal"><span class="pre">sphinx-quickstart</span></tt>.
+You may answer all questions as default.</p>
+<div class="highlight-sh"><div class="highlight"><pre>% <span class="nb">cd </span>tach.github.com
+% mkdir src
+% <span class="nb">cd </span>src
+% sphinx-quickstart
+</pre></div>
+</div>
+<p>Install <strong>phinxtogithub extension</strong>
+(<a class="reference external" href="https://github.com/michaeljones/sphinx-to-github">https://github.com/michaeljones/sphinx-to-github</a>)
+into your exts directory.</p>
+<div class="highlight-sh"><div class="highlight"><pre>% mkdir exts
+% <span class="nb">pushd </span>exts
+% git clone git://github.com/michaeljones/sphinx-to-github.git
+% rsync -rlvHS --exclude<span class="o">=</span>tests sphinx-to-github/sphinxtogithub ./
+% rm -rf sphinx-to-github
+% <span class="nb">popd</span>
+</pre></div>
+</div>
+<p>Edit sys.path on your <tt class="docutils literal"><span class="pre">conf.py</span></tt> and Add extension settings.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;exts&#39;</span><span class="p">))</span>
+<span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&quot;sphinxtogithub&quot;</span> <span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># options for sphinxtogithub</span>
+<span class="n">sphinx_to_github</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">sphinx_to_github_verbose</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>Edit your Makefile like <a class="reference external" href="https://github.com/tach/tach.github.com/blob/master/src/Makefile">https://github.com/tach/tach.github.com/blob/master/src/Makefile</a> .</p>
+<p>At last, run <tt class="docutils literal"><span class="pre">make</span> <span class="pre">publish</span></tt> to publish your pages.</p>
+<div class="highlight-sh"><div class="highlight"><pre>% make publish
+</pre></div>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/michaeljones/sphinx-to-github">https://github.com/michaeljones/sphinx-to-github</a></li>
+<li><a class="reference external" href="http://sphinx-users.jp/technical.html">Sphinx Technical Information (in Japanese)</a></li>
 </ul>
 </div>
 </div>
@@ -79,6 +119,7 @@ That&#8217;s all.</p>
 <li><a class="reference internal" href="#">Using Sphinx</a><ul>
 <li><a class="reference internal" href="#installing-into-macosx-10-7-lion">Installing into MacOSX 10.7 (Lion)</a></li>
 <li><a class="reference internal" href="#how-to-create-tach-github-com">How to create tach.github.com</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>
