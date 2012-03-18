@@ -44,12 +44,12 @@ publish: html
 	rsync -rlvHS $(BUILDDIR)/html/ $(PUBLISHDIR)/
 	find $(PUBLISHDIR) -mindepth 1 -type d \
 	    ! -path $(BUILDDIR) ! -path $(BUILDDIR)/\* \
-	    ! -path $(PUBLISHDIR)/sources ! -path $(PUBLISHDIR)/sources/\* \
+	    ! -path $(PUBLISHDIR)/src ! -path $(PUBLISHDIR)/src/\* \
 	    ! -path $(PUBLISHDIR)/.git ! -path $(PUBLISHDIR)/.git/\* \
 	    -exec git add {} \;
 	find $(PUBLISHDIR) -mindepth 1 -type f \
 	    ! -path $(BUILDDIR)/\* \
-	    ! -path $(PUBLISHDIR)/sources/\* \
+	    ! -path $(PUBLISHDIR)/src/\* \
 	    ! -path $(PUBLISHDIR)/.git/\* \
 	    -exec git add {} \;
 	git commit -am "Published at `env LC_ALL=C date`"
