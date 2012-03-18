@@ -1,2 +1,4 @@
 .buildinfo
 _build
+*.swp
+*.bak
