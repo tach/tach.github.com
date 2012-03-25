@@ -6,6 +6,7 @@ tach.github.com
    :maxdepth: 2
 
    sphinx
+   debian
 
 Indices and tables
 ==================

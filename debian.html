@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Debian GNU/Linux Development &mdash; tach.github.com</title>
+    
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="tach.github.com" href="index.html" />
+    <link rel="prev" title="Using Sphinx" href="sphinx.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sphinx.html" title="Using Sphinx"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">tach.github.com</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="debian-gnu-linux-development">
+<h1>Debian GNU/Linux Development<a class="headerlink" href="#debian-gnu-linux-development" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="make-package-using-svn-buildpackage">
+<h2>Make package using svn-buildpackage<a class="headerlink" href="#make-package-using-svn-buildpackage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="import-your-repository-to-svn-debian-org">
+<h3>Import your repository to svn.debian.org<a class="headerlink" href="#import-your-repository-to-svn-debian-org" title="Permalink to this headline">¶</a></h3>
+<p>svn.debian.org (Alioth) has two different types of repositories.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://anonscm.debian.org/viewvc/collab-maint/deb-maint/">deb-maint</a> :
+Collaboration between Debian Developers<ul>
+<li><tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">svn+ssh://svn.debian.org/svn/collab-maint/deb-maint</span></tt></li>
+</ul>
+</li>
+<li><a class="reference external" href="http://anonscm.debian.org/viewvc/collab-maint/ext-maint/">ext-maint</a> :
+Collaboration between Debian Developers and others<ul>
+<li><tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">svn+ssh://svn.debian.org/svn/collab-maint/deb-maint</span></tt></li>
+</ul>
+</li>
+</ul>
+<p>Select repository which you should use.</p>
+<p>Read <a class="reference external" href="http://wiki.debian.org/Alioth/CollabMaintImport">http://wiki.debian.org/Alioth/CollabMaintImport</a> at first.
+Then, execute following commands to dump.</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">SVNROOTPATH</span><span class="o">=</span>/your/svn/root/path/of/repos
+<span class="nv">PKGBASEDIR</span><span class="o">=</span>debian
+<span class="nv">PKG</span><span class="o">=</span>your-package-name
+
+<span class="nv">workdir</span><span class="o">=</span><span class="sb">`</span>mktemp -d<span class="sb">`</span> <span class="o">&amp;&amp;</span> <span class="nb">pushd</span> <span class="nv">$workdir</span>
+
+<span class="c"># dump your package</span>
+<span class="nv">dumpfile</span><span class="o">=</span><span class="nv">$PKG</span>.svndump
+svnadmin dump <span class="nv">$SVNROOTPATH</span> <span class="se">\</span>
+  | svndumpfilter --drop-empty-revs include <span class="nv">$PKGBASEDIR</span>/<span class="nv">$PKG</span> <span class="se">\</span>
+  1&gt; <span class="nv">$dumpfile</span> 2&gt; dumpfile.error
+perl -i.bak -npe <span class="s2">&quot;s|^(\S+-path: )$PKGBASEDIR/|\$1|&quot;</span> <span class="nv">$dumpfile</span>
+
+<span class="c"># restore test</span>
+svnadmin create <span class="nv">$workdir</span>/collab-maint
+svn mkdir file://<span class="nv">$workdir</span>/collab-maint/deb-maint -m <span class="s2">&quot;Initial directory creation&quot;</span>
+svnadmin load <span class="nv">$workdir</span>/collab-maint --parent-dir deb-maint &lt; <span class="nv">$dumpfile</span> <span class="se">\</span>
+  &gt; load 2&gt; load.error
+<span class="nb">test</span> ! -s load.error <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Succeeded&quot;</span>
+
+<span class="c"># check restored</span>
+svn list file://<span class="nv">$workdir</span>/collab-maint/deb-maint
+svn log file://<span class="nv">$workdir</span>/collab-maint/deb-maint/<span class="nv">$PKG</span>
+
+<span class="c"># additional tests</span>
+svn co file://<span class="nv">$workdir</span>/collab-maint/deb-maint/<span class="nv">$PKG</span>
+<span class="nb">pushd</span> <span class="nv">$PKG</span>/trunk <span class="o">&amp;&amp;</span> svn-buildpackage -uc -us
+<span class="nb">popd</span>
+
+<span class="c"># copy dumpfile to svn.debian.org</span>
+scp <span class="nv">$dumpfile</span> svn.debian.org:
+
+<span class="c"># remove working dir</span>
+<span class="nb">popd</span> <span class="o">&amp;&amp;</span> rm -rf <span class="nv">$workdir</span>
+</pre></div>
+</div>
+<p>After that, you can restore dumped file into svn.debian.org.</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c"># log into svn.debian.org</span>
+ssh svn.debian.org
+
+<span class="c"># check repository</span>
+svn list file:///svn/collab-maint/deb-maint
+<span class="c"># or svn list file:///svn/collab-maint/ext-maint</span>
+
+<span class="c"># load file to repos (replace dumpfile with real filename)</span>
+svnadmin load /svn/collab-maint --parent-dir deb-maint &lt; dumpfile &gt; load 2&gt; load.error
+<span class="nb">test</span> ! -s load.error <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Succeeded&quot;</span>
+
+<span class="c"># check restored (replace your-package-name with real package name)</span>
+svn list
+svn log file:///svn/collab-maint/deb-maint/your-package-name
+</pre></div>
+</div>
+<p>At last, checkout your repository and build.</p>
+<div class="highlight-sh"><div class="highlight"><pre>svn co svn+ssh://svn.debian.org/svn/collab-maint/deb-maint/your-package-name
+<span class="nb">cd </span>your-package-name
+svn-buildpackage
+</pre></div>
+</div>
+<p>See also</p>
+<ul class="simple">
+<li><a class="reference external" href="http://wiki.debian.org/Alioth/CollabMaintImport">Alioth CollabMaintImport</a></li>
+<li><a class="reference external" href="http://wiki.debian.org/Alioth/PackagingProject">Alioth PackagingProject</a></li>
+<li><a class="reference external" href="http://wiki.debian.org/Alioth/Svn">Useful tricks with SVN on Alioth</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Debian GNU/Linux Development</a><ul>
+<li><a class="reference internal" href="#make-package-using-svn-buildpackage">Make package using svn-buildpackage</a><ul>
+<li><a class="reference internal" href="#import-your-repository-to-svn-debian-org">Import your repository to svn.debian.org</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sphinx.html"
+                        title="previous chapter">Using Sphinx</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/debian.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sphinx.html" title="Using Sphinx"
+             >previous</a> |</li>
+        <li><a href="index.html">tach.github.com</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Taku YASUI.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
