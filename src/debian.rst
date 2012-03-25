@@ -36,7 +36,7 @@ Then, execute following commands to dump.
    # dump your package
    dumpfile=$PKG.svndump
    svnadmin dump $SVNROOTPATH \
-     | svndumpfilter --drop-empty-revs include $PKGBASEDIR/$PKG \
+     | svndumpfilter --renumber-revs --drop-empty-revs include $PKGBASEDIR/$PKG \
      1> $dumpfile 2> dumpfile.error
    perl -i.bak -npe "s|^(\S+-path: )$PKGBASEDIR/|\$1|" $dumpfile
 
