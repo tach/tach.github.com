@@ -78,7 +78,7 @@ Then, execute following commands to dump.</p>
 <span class="c"># dump your package</span>
 <span class="nv">dumpfile</span><span class="o">=</span><span class="nv">$PKG</span>.svndump
 svnadmin dump <span class="nv">$SVNROOTPATH</span> <span class="se">\</span>
-  | svndumpfilter --drop-empty-revs include <span class="nv">$PKGBASEDIR</span>/<span class="nv">$PKG</span> <span class="se">\</span>
+  | svndumpfilter --renumber-revs --drop-empty-revs include <span class="nv">$PKGBASEDIR</span>/<span class="nv">$PKG</span> <span class="se">\</span>
   1&gt; <span class="nv">$dumpfile</span> 2&gt; dumpfile.error
 perl -i.bak -npe <span class="s2">&quot;s|^(\S+-path: )$PKGBASEDIR/|\$1|&quot;</span> <span class="nv">$dumpfile</span>
 
