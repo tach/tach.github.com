@@ -5,7 +5,7 @@ Using Sphinx
 Installing Sphinx into MacOSX 10.7 (Lion)
 =========================================
 
-Run following two commands to install.
+Execute following two commands to install.
 
 .. code-block:: sh
 
@@ -17,13 +17,14 @@ That's all.
 Installing Sphinx into Cygwin
 =============================
 
-Run following commands to install.
+Install *wget* and *python* using Cygwin setup.exe.
+Then, execute following commands to install.
 
 .. code-block:: sh
 
    % wget http://peak.telecommunity.com/dist/ez_setup.py
    % python ez_setup.py
-   % sudo easy_install pip
+   % easy_install pip
    % pip install Sphinx
 
 How to create tach.github.com
