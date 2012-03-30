@@ -14,6 +14,18 @@ Run following two commands to install.
 
 That's all.
 
+Installing Sphinx into Cygwin
+=============================
+
+Run following commands to install.
+
+.. code-block:: sh
+
+   % wget http://peak.telecommunity.com/dist/ez_setup.py
+   % python ez_setup.py
+   % sudo easy_install pip
+   % pip install Sphinx
+
 How to create tach.github.com
 =============================
 
